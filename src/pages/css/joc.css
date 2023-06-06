@@ -1,0 +1,27 @@
+.textdiv{
+    display: flex;
+    flex-direction: row;
+}
+.text{
+    margin: 0;
+}
+.gamediv{
+    background-color: aqua;
+    display: flex;
+    flex-direction: row;
+}
+.infodiv{
+    background-color: blue;
+    width: 33%;
+}
+.canvasdiv{
+    background-color: cadetblue;
+    width: 33%;
+}
+.imagediv{
+    background-color: darkcyan;
+    width: 33%;
+}
+canvas{
+    border: 2px solid black;
+}

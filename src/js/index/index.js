@@ -3,10 +3,13 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
 
     var usuario = document.getElementById("usuario").value;
     var contrasenya = document.getElementById("contrasenya").value;
-    localStorage.setItem("usuario", usuario);
     if (usuario === "admin" && contrasenya === "admin") {
         window.location.href = "pages/admin/menu.html";
-    } else {
-        window.location.href = "pages/user/jugar.html";
+        localStorage.setItem("usuario", usuario);
+    } else if(usuario === "admin" && contrasenya != "admin"){
+        location.reload();
+    }else {
+        window.location.href = "pages/user/menu.html";
+        localStorage.setItem("usuario", usuario);
     }
 });
