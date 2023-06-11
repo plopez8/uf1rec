@@ -1,3 +1,5 @@
+import { generarMatriu, checkPosi } from './matrius.js';
+
 document.addEventListener("DOMContentLoaded", function() {
   var paraulaElement = document.getElementById("paraula");
   var tempsElement = document.getElementById("temps");
@@ -19,15 +21,25 @@ document.addEventListener("DOMContentLoaded", function() {
   var intervalId;
   var encertades = 0;
   var punts = 0;
-  fetch("../../data/paraules.json")
-    .then(response => response.json())
-    .then(data => {
-      paraules = data.paraules;
-      iniciarJuego();
-    })
-    .catch(error => {
-      console.error("Error al cargar el archivo JSON:", error);
-    });
+
+  var palabrasGuardadas = JSON.parse(localStorage.getItem("paraules"));
+  if (palabrasGuardadas) {
+    paraules = palabrasGuardadas;
+    iniciarJuego();
+  } else {
+    fetch("../../data/paraules.json")
+      .then(response => response.json())
+      .then(data => {
+        paraules = data.paraules;
+
+        localStorage.setItem("paraules", JSON.stringify(paraules));
+
+        iniciarJuego();
+      })
+      .catch(error => {
+        console.error("Error al cargar el archivo JSON:", error);
+      });
+  }
 
   function iniciarJuego() {
     paraulaSelect = paraules[Math.floor(Math.random() * paraules.length)];
@@ -38,7 +50,9 @@ document.addEventListener("DOMContentLoaded", function() {
     correcteElement.textContent = lletcorrectes;
     errorElement.textContent = lleterror;
     lletraElement.textContent = "";
+
     colocar();
+
     var startTime = Date.now();
     intervalId = setInterval(function() {
       var currentTime = Date.now();
@@ -47,24 +61,13 @@ document.addEventListener("DOMContentLoaded", function() {
     }, 1000);
   }
 
-
-  function colocar(){
-    console.log("colocar")
-    matriu = generarMatrizVacia(canvas.width, canvas.height);
+  function colocar() {
+    console.log("colocar");
+    console.log("colocar2");
+    matriu = generarMatriu(canvas.width, canvas.height);
     letras = paraulaSelect.traduccio.split("");
     posi = [];
     dibujarLetras();
-  }
-
-  function generarMatrizVacia(width, height) {
-    var matriz = [];
-    for (var amp = 0; amp < width; amp++) {
-      matriz[amp] = [];
-      for (var alt = 0; alt < height; alt++) {
-        matriz[amp][alt] = false;
-      }
-    }
-    return matriz;
   }
 
   function dibujarLetras() {
@@ -78,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
       do {
         posX = Math.floor(Math.random() * (canvas.width - 40)) + 20;
         posY = Math.floor(Math.random() * (canvas.height - 40)) + 20;
-      } while (checkPosi(posX, posY));
+      } while (checkPosi(posX, posY, matriu));
 
       for (var x = posX - 20; x <= posX + 20; x++) {
         for (var y = posY - 20; y <= posY + 20; y++) {
@@ -93,17 +96,6 @@ document.addEventListener("DOMContentLoaded", function() {
       context.font = "14px Courier";
       context.fillText(letra, posX, posY);
     }
-  }
-
-  function checkPosi(posX, posY) {
-    for (var x = posX - 20; x <= posX + 20; x++) {
-      for (var y = posY - 20; y <= posY + 20; y++) {
-        if (matriu[x] && matriu[x][y]) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   function handleCanvasClick(event) {
@@ -130,6 +122,7 @@ document.addEventListener("DOMContentLoaded", function() {
       lletraElement.textContent = letra;
       fotoElement.src = "../../../images/ok.webp";
       console.log("is");
+      console.log("is2");
     } else {
       lleterror++;
       errorElement.textContent = lleterror;
@@ -142,17 +135,61 @@ document.addEventListener("DOMContentLoaded", function() {
       fotoElement.src = "";
       encertades++;
       encertadesElement.textContent = encertades;
-      punts = punts + (lletcorrectes - lleterror) + 10;
-      if(punts < 0){
-        punts = 0;
+      punts = (lletcorrectes - lleterror) + 10
+      puntsTotal = puntsTotal + punts;
+      if(puntsTotal < 0){
+        puntsTotal = 0;
       }
-      puntsElement.textContent = punts;
-      iniciarJuego();
+      puntsElement.textContent = puntsTotal;
+      console.log(paraulaSelect);
+      console.log(paraulaSelect.paraula);
+      let datos = {
+        paraula: paraulaSelect.paraula,
+        traduccio: paraulaSelect.traduccio,
+        temps: tempsElement.textContent,
+        correctes: lletcorrectes,
+        errors: lleterror,
+        punts: punts
+      };
+      
+      console.log("hola");
+      console.log(localStorage.getItem("jugador"));
+      guardarRegistro(localStorage.getItem("jugador"), datos);
+      iniciarJuego( );
     }
   }
 
-  canvas.addEventListener("click", handleCanvasClick);
 
+  function guardarRegistro(usuario, partida) {
+    console.log("save");
+    console.log(partida);
+    console.log(usuario);
+  
+    var registroExistente = JSON.parse(localStorage.getItem("registre")) || {};
+  
+    console.log(registroExistente);
+    
+    if (!registroExistente.hasOwnProperty(usuario)) {
+      console.log("if!");
+      registroExistente[usuario] = [];
+    }
+    
+    registroExistente[usuario].push(partida);
+    
+    console.log("registroExistente");
+    console.log(registroExistente);
+  
+    localStorage.setItem("registre", JSON.stringify(registroExistente));
+  
+    console.log("Registro guardado exitosamente:", registroExistente);
+  }
+  
+  
+  
+  
+  
+  canvas.addEventListener("click", handleCanvasClick);
+  
   var botonRenovar = document.querySelector("button");
   botonRenovar.addEventListener("click", colocar);
 });
