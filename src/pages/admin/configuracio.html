@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Configuración</title>
+  <script src="../../js/admin/configuracio.js"></script>
+</head>
+<body>
+  <h1>Configuración</h1>
+  
+  <label>Lletres repetides:</label>
+  <label>
+    <input type="radio" name="opcion1" value="si"> Si
+  </label>
+  <label>
+    <input type="radio" name="opcion1" value="no"> No
+  </label>
+  <br>
+  
+  <label>Nomes lletres paraula:</label>
+  <label>
+    <input type="radio" name="opcion2" value="si"> Si
+  </label>
+  <label>
+    <input type="radio" name="opcion2" value="no"> No
+  </label>
+  <br>
+
+  <label>Numero de lletres (1-90):</label>
+  <input type="number" id="numero-lletres">
+  <br>
+  
+  <label>Tipus de lletra:</label>
+  <label>
+    <input type="radio" name="opcion3" value="minuscules"> Minuscules
+  </label>
+  <label>
+    <input type="radio" name="opcion3" value="majuscules"> Majuscules
+  </label>
+  <label>
+    <input type="radio" name="opcion3" value="minuscules_majuscules"> Minuscules i Majuscules
+  </label>
+  <br>
+  
+  <button onclick="guardarConfiguracion()">Guardar</button>
+  </body>

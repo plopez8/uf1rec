@@ -21,7 +21,19 @@ document.addEventListener("DOMContentLoaded", function() {
   var intervalId;
   var encertades = 0;
   var punts = 0;
+  var configuracionGuardada = JSON.parse(localStorage.getItem("configuracion"));
 
+  if (!configuracionGuardada) {
+
+    var configuracionPorDefecto = {
+      lletresRepetides: "no",
+      nomesLletresParaula: "no",
+      numeroLletres: 3,
+      tipusLletra: "si"
+    };
+    localStorage.setItem("configuracion", JSON.stringify(configuracionPorDefecto));
+    configuracionGuardada = configuracionPorDefecto;
+  }
   var palabrasGuardadas = JSON.parse(localStorage.getItem("paraules"));
   if (palabrasGuardadas) {
     paraules = palabrasGuardadas;
@@ -62,20 +74,42 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function colocar() {
-    console.log("colocar");
-    console.log("colocar2");
     matriu = generarMatriu(canvas.width, canvas.height);
     letras = paraulaSelect.traduccio.split("");
     posi = [];
-    dibujarLetras();
+    var configuracion = JSON.parse(localStorage.getItem("configuracion"));
+    var numeroLletres = configuracion.numeroLletres;
+  
+    var letrasRandom = letras.slice();
+    if(configuracion.tipusLletra == "minuscules"){
+      var alfabeto = "abcdefghijklmnopqrstuvwxyz";
+    }else if(configuracion.tipusLletra == "majuscules"){
+      var alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    }else{
+      var alfabeto = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    }
+    
+    while (letrasRandom.length < numeroLletres) {
+      var letraAleatoria = alfabeto[Math.floor(Math.random() * alfabeto.length)];
+      letrasRandom.push(letraAleatoria);
+    }
+  
+    for (var i = letrasRandom.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = letrasRandom[i];
+      letrasRandom[i] = letrasRandom[j];
+      letrasRandom[j] = temp;
+    }
+  
+    dibujarLetras(letrasRandom);
   }
 
-  function dibujarLetras() {
+  function dibujarLetras(letrasRandom) {
     var context = canvas.getContext("2d");
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (var i = 0; i < letras.length; i++) {
-      var letra = letras[i];
+    for (var i = 0; i < letrasRandom.length; i++) {
+      var letraRandom = letrasRandom[i];
       var posX;
       var posY;
       do {
@@ -94,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function() {
       posi.push({ x: posX, y: posY });
 
       context.font = "14px Courier";
-      context.fillText(letra, posX, posY);
+      context.fillText(letraRandom, posX, posY);
     }
   }
 
@@ -121,8 +155,6 @@ document.addEventListener("DOMContentLoaded", function() {
       correcteElement.textContent = lletcorrectes;
       lletraElement.textContent = letra;
       fotoElement.src = "../../../images/ok.webp";
-      console.log("is");
-      console.log("is2");
     } else {
       lleterror++;
       errorElement.textContent = lleterror;
@@ -141,8 +173,6 @@ document.addEventListener("DOMContentLoaded", function() {
         puntsTotal = 0;
       }
       puntsElement.textContent = puntsTotal;
-      console.log(paraulaSelect);
-      console.log(paraulaSelect.paraula);
       let datos = {
         paraula: paraulaSelect.paraula,
         traduccio: paraulaSelect.traduccio,
@@ -152,8 +182,6 @@ document.addEventListener("DOMContentLoaded", function() {
         punts: punts
       };
       
-      console.log("hola");
-      console.log(localStorage.getItem("jugador"));
       guardarRegistro(localStorage.getItem("jugador"), datos);
       iniciarJuego( );
     }
@@ -161,27 +189,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
   function guardarRegistro(usuario, partida) {
-    console.log("save");
-    console.log(partida);
-    console.log(usuario);
   
     var registroExistente = JSON.parse(localStorage.getItem("registre")) || {};
   
-    console.log(registroExistente);
     
     if (!registroExistente.hasOwnProperty(usuario)) {
-      console.log("if!");
       registroExistente[usuario] = [];
     }
     
     registroExistente[usuario].push(partida);
     
-    console.log("registroExistente");
-    console.log(registroExistente);
   
     localStorage.setItem("registre", JSON.stringify(registroExistente));
   
-    console.log("Registro guardado exitosamente:", registroExistente);
   }
   
   
