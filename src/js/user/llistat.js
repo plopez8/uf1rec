@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
           var partidas = registros[usuario];
           for (var i = 0; i < partidas.length; i++) {
             var partida = partidas[i];
+            console.log(partida.temps);
             var fila = tablaRegistros.insertRow();
             fila.insertCell().textContent = usuario;
             fila.insertCell().textContent = partida.paraula;
@@ -21,8 +22,14 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
   function segundosAMinutosSegundos(tiempo) {
-    var minutos = Math.floor(tiempo / 60);
-    var segundos = tiempo % 60;
-    return minutos + "min " + segundos + "seg";
-}
+    tiempo = parseInt(tiempo);
+    if (tiempo >= 60) {
+      var minutos = Math.floor(tiempo / 60);
+      var segundos = tiempo % 60;
+      return minutos + " min " + segundos + " seg";
+    }else if (tiempo <59) {
+      return "0 min " + tiempo + " seg";
+    }
+  }
   
+    

@@ -54,9 +54,41 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Error al cargar el archivo JSON:", error);
       });
   }
-
+  function generarPalabraAleatoria(edad) {
+    var palabra = "";
+    var maxLongitud = 6;
+  
+    // Verificar si la edad es inferior a 8 años
+    if (calcularEdad(edad) < 8) {
+      // Generar palabras aleatorias hasta que se cumpla la condición de longitud
+      do {
+        palabra = paraules[Math.floor(Math.random() * paraules.length)];
+      } while (palabra.traduccio.length > maxLongitud);
+    } else {
+      // Generar palabra aleatoria sin restricciones de longitud
+      palabra = paraules[Math.floor(Math.random() * paraules.length)];
+    }
+  
+    return palabra;
+  }
+  
+  function calcularEdad(fechaNacimiento) {
+    // Calcular la edad a partir de la fecha de nacimiento
+    var fechaActual = new Date();
+    var fechaNac = new Date(fechaNacimiento);
+    var edad = fechaActual.getFullYear() - fechaNac.getFullYear();
+    var mes = fechaActual.getMonth() - fechaNac.getMonth();
+  
+    if (mes < 0 || (mes === 0 && fechaActual.getDate() < fechaNac.getDate())) {
+      edad--;
+    }
+    console.log(edad);
+    return edad;
+  }
   function iniciarJuego() {
-    paraulaSelect = paraules[Math.floor(Math.random() * paraules.length)];
+    var edadUsuario = localStorage.getItem("dateOfBirth");
+    paraulaSelect = generarPalabraAleatoria(edadUsuario);
+    console.log(paraulaSelect);
     paraulaElement.textContent = paraulaSelect.paraula;
     
     lletcorrectes = 0;
