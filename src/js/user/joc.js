@@ -16,11 +16,13 @@ document.addEventListener("DOMContentLoaded", function() {
   var matriu;
   var letras;
   var posi;
+  var letrasRandom;
   var lletcorrectes = 0;
   var lleterror = 0;
   var intervalId;
   var encertades = 0;
   var punts = 0;
+  var puntsTotal = 0;
   var configuracionGuardada = JSON.parse(localStorage.getItem("configuracion"));
 
   if (!configuracionGuardada) {
@@ -72,7 +74,6 @@ document.addEventListener("DOMContentLoaded", function() {
       tempsElement.textContent = elapsedTime + " segons";
     }, 1000);
   }
-
   function colocar() {
     matriu = generarMatriu(canvas.width, canvas.height);
     letras = paraulaSelect.traduccio.split("");
@@ -80,20 +81,23 @@ document.addEventListener("DOMContentLoaded", function() {
     var configuracion = JSON.parse(localStorage.getItem("configuracion"));
     var numeroLletres = configuracion.numeroLletres;
   
-    var letrasRandom = letras.slice();
-    if(configuracion.tipusLletra == "minuscules"){
+    letrasRandom = letras.slice();
+    if (configuracion.tipusLletra == "minuscules") {
       var alfabeto = "abcdefghijklmnopqrstuvwxyz";
-    }else if(configuracion.tipusLletra == "majuscules"){
+    } else if (configuracion.tipusLletra == "majuscules") {
       var alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    }else{
-      var alfabeto = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    } else {
+      var alfabeto =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     }
-    
+  
     while (letrasRandom.length < numeroLletres) {
-      var letraAleatoria = alfabeto[Math.floor(Math.random() * alfabeto.length)];
+      var letraAleatoria =
+        alfabeto[Math.floor(Math.random() * alfabeto.length)];
       letrasRandom.push(letraAleatoria);
     }
   
+    // Mezclar las letras de forma aleatoria
     for (var i = letrasRandom.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
       var temp = letrasRandom[i];
@@ -103,6 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
   
     dibujarLetras(letrasRandom);
   }
+  
 
   function dibujarLetras(letrasRandom) {
     var context = canvas.getContext("2d");
@@ -136,18 +141,23 @@ document.addEventListener("DOMContentLoaded", function() {
     var rect = canvas.getBoundingClientRect();
     var clickX = event.clientX - rect.left;
     var clickY = event.clientY - rect.top;
-
-    for (var i = 0; i < letras.length; i++) {
-      var letra = letras[i];
+  console.log(posi);
+    for (var i = 0; i < posi.length; i++) {
       var posX = posi[i].x;
       var posY = posi[i].y;
-
-      if (clickX >= posX - 20 && clickX <= posX + 20 && clickY >= posY - 20 && clickY <= posY + 20) {
-        click(letra);
+  
+      if (
+        clickX >= posX - 20 &&
+        clickX <= posX + 20 &&
+        clickY >= posY - 20 &&
+        clickY <= posY + 20
+      ) {
+        click(letrasRandom[i]);
         break;
       }
     }
   }
+  
 
   function click(letra) {
     if (letra == letras[lletcorrectes]) {
@@ -183,7 +193,8 @@ document.addEventListener("DOMContentLoaded", function() {
       };
       
       guardarRegistro(localStorage.getItem("jugador"), datos);
-      iniciarJuego( );
+      console.log("gg");
+      iniciarJuego();
     }
   }
 

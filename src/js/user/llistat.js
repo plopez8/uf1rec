@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
             fila.insertCell().textContent = usuario;
             fila.insertCell().textContent = partida.paraula;
             fila.insertCell().textContent = partida.traduccio;
-            fila.insertCell().textContent = partida.temps;
+            fila.insertCell().textContent = segundosAMinutosSegundos(partida.temps);
             fila.insertCell().textContent = partida.correctes;
             fila.insertCell().textContent = partida.errors;
             fila.insertCell().textContent = partida.punts;
@@ -20,4 +20,9 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
   });
+  function segundosAMinutosSegundos(tiempo) {
+    var minutos = Math.floor(tiempo / 60);
+    var segundos = tiempo % 60;
+    return minutos + "min " + segundos + "seg";
+}
   
