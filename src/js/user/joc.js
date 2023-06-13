@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var paraulaSelect;
   var matriu;
   var letras;
+  var letrasfaltan;
   var posi;
   var letrasRandom;
   var lletcorrectes = 0;
@@ -109,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function() {
   function colocar() {
     matriu = generarMatriu(canvas.width, canvas.height);
     letras = paraulaSelect.traduccio.split("");
+    letrasfaltan = paraulaSelect.traduccio.split("");
     posi = [];
     var configuracion = JSON.parse(localStorage.getItem("configuracion"));
     var numeroLletres = configuracion.numeroLletres;
@@ -192,12 +194,21 @@ document.addEventListener("DOMContentLoaded", function() {
   
 
   function click(letra) {
-    if (letra == letras[lletcorrectes]) {
-      lletcorrectes++;
-      correcteElement.textContent = lletcorrectes;
-      lletraElement.textContent = letra;
-      fotoElement.src = "../../../images/ok.webp";
-    } else {
+    var letraCoincide = false;
+    for (var i = 0; i < letrasfaltan.length; i++) {
+      if (letra === letrasfaltan[i]) {
+        lletcorrectes++;
+        correcteElement.textContent = lletcorrectes;
+        lletraElement.textContent = letra;
+        fotoElement.src = "../../../images/ok.webp";
+        
+        letrasfaltan.splice(i, 1); // Eliminar la letra coincidente de letrasfaltan
+        letraCoincide = true;
+        break; // Salir del bucle después de encontrar una coincidencia
+      }
+    }
+    
+    if (!letraCoincide) {
       lleterror++;
       errorElement.textContent = lleterror;
       lletraElement.textContent = letra;
@@ -221,9 +232,11 @@ document.addEventListener("DOMContentLoaded", function() {
         temps: tempsElement.textContent,
         correctes: lletcorrectes,
         errors: lleterror,
-        punts: punts
+        punts: punts,
+        edad: localStorage.getItem("dateOfBirth"),
+        data: new Date()
       };
-      
+      console.log(datos);
       guardarRegistro(localStorage.getItem("jugador"), datos);
       console.log("gg");
       iniciarJuego();
